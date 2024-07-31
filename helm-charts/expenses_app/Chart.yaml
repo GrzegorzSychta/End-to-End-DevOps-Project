@@ -1,0 +1,6 @@
+# TO-DO: improve templating for Helm charts
+apiVersion: v2
+name: expenses-app
+description: A Helm chart for deploying the Expenses App
+version: 0.1.0
+appVersion: "1.0"

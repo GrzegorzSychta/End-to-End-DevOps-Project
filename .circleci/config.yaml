@@ -1,0 +1,18 @@
+# This configuration file is used to trigger the workflow-dispatch job, which determines which jobs to run based on the files that have changed in the repository.
+version: 2.1
+setup: true
+orbs:
+  path-filtering: circleci/path-filtering@1.0.0
+
+workflows:
+  version: 2
+  dispatch:
+    jobs:
+      - path-filtering/filter:
+          name: workflow-dispatch
+          mapping: |
+            src/expenses_app/.* expenses_app true
+            src/front_app/.* front_app true
+            src/flask_auth_app/.* flask_auth_app true
+          base-revision: main
+          config-path: .circleci/continue_config.yaml

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "front-app.fullname" . }}
+  labels:
+    app: {{ include "front-app.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "front-app.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "front-app.name" . }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.image}}
+        ports:
+        - containerPort: {{ .Values.service.targetPort }}
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecrets }}

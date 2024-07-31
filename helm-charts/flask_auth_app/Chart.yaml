@@ -1,0 +1,6 @@
+# TO-DO: improve templating for Helm charts
+apiVersion: v2
+name: flask-auth-app
+description: A Helm chart for deploying the Flask Auth App
+version: 0.1.0
+appVersion: "1.0"

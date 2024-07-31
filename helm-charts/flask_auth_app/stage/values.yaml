@@ -1,0 +1,11 @@
+# Image modification triggered by CircleCI will start the deployment process
+replicaCount: 1
+image: grg1337/fintrack:flask_auth_app-main-20240729121158
+imagePullSecrets: regcred
+namespace: stage
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 43482
+secrets:
+  name: stage-docdb-secret

@@ -1,0 +1,37 @@
+# ApplicationSet created under the App of Apps ( created during the cluster bootstrap ), managed by ArgoCD
+# Will generate 3 Applications, one for each environment (dev, stage, prod) with the corresponding values.yaml file.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: front-application-set
+spec:
+  generators:
+    - list:
+        elements:
+          - environment: dev
+            valuesPath: dev/values.yaml
+          - environment: stage
+            valuesPath: stage/values.yaml
+          - environment: prod
+            valuesPath: prod/values.yaml
+  template:
+    metadata:
+      name: 'front-app-{{environment}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/GrzegorzSychta/FinTrack.git'
+        targetRevision: main
+        path: helm-charts/front_app
+        helm:
+          valueFiles:
+            - '{{valuesPath}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{environment}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

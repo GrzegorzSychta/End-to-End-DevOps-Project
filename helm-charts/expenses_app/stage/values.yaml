@@ -1,0 +1,11 @@
+# Image modification triggered by CircleCI will start the deployment process
+replicaCount: 1
+image: grg1337/fintrack:expenses_app-main-20240729121159
+imagePullSecrets: regcred
+namespace: stage
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 43462
+secrets:
+  name: stage-docdb-secret

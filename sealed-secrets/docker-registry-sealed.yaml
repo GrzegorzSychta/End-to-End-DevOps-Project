@@ -1,0 +1,66 @@
+# It is safe to store the sealed secret in the git repository as it can be decrypted only by the cluster where it was created.
+# Secrets can be sealed offline using the kubeseal CLI. To do so I created the SealedSecret with the predefined tls certificate.
+# Secret with Docker Registry credentials.
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  annotations:
+    sealedsecrets.bitnami.com/cluster-wide: "true"
+  creationTimestamp: null
+  name: regcred
+  namespace: stage
+spec:
+  encryptedData:
+    .dockerconfigjson: AQCej84lS22WWuk7F76ihqrSbFEYFuWhHCoKRreb1sRQYg30+gS8nYjtZfTE3pwMcIfvjVa9ZXvW9vWfb/IHd2BxcYxQkp43BLmk/K41BGKIt03Eg4vKRBExQze1zWAbOlLRQPJ+EZwZJkDf1XbP1jJe3GhyluJfJHKGmcgUJO1Pj307Xriuvf7vn0IaTZTe76LLihBQvSRemaXvtUt7SRe+YyYuiizPs9plP05dlw5jbNweWfZWqjQetNV95njPvMy3BoXrqTVMywOlDQxl44WusZoSFv+q4oPKhipPWKFCcVn+H+Du1zEsVOpxYThom4Ja+MdpkiLTctiCJ8DSBMBeAn7FxCAtJlWdzo+Fjm+g8CTnnCn4H4vKsJu91fZ3rvaYdh7eLJjd7oMTGr0YqyqLLZel2uFb6eZaN+8tQ0mb6DEMo5/uFvfYuqpG38/3dv4lqYuzp1sTFbNebFAxyXfp3to5H0Y82g92M6IwQuOIyFqNnfy8/P7v0s3jFa/MoZzTUkPv7+sIOTS2z+Fy6uQGHzptnWoPFA3YjtYkME1FNB6xrM//CAKfp7jwpMDbRg6dFmLmhCdGVVsIsj9d2hVBf5Pyn34108H1dXw=
+  template:
+    metadata:
+      annotations:
+        sealedsecrets.bitnami.com/cluster-wide: "true"
+      creationTimestamp: null
+      name: regcred
+      namespace: stage
+    type: kubernetes.io/dockerconfigjson
+
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  annotations:
+    sealedsecrets.bitnami.com/cluster-wide: "true"
+  creationTimestamp: null
+  name: regcred
+  namespace: prod
+spec:
+  encryptedData:
+    .dockerconfigjson: AQCej84lS22WWuk7F76ihqrSbFEYFuWhHCoKRreb1sRQYg30+gS8nYjtZfTE3pwMcIfvjVa9ZXvW9vWfb/IHd2BxcYxQkp43BLmk/K41BGKIt03Eg4vKRBExQze1zWAbOlLRQPJ+EZwZJkDf1XbP1jJe3GhyluJfJHKGmcgUJO1Pj307Xriuvf7vn0IaTZTe76LLihBQvSRemaXvtUt7SRe+YyYuiizPs9plP05dlw5jbNweWfZWqjQetNV95njPvMy3BoXrqTVMywOlDQxl44WusZoSFv+q4oPKhipPWKFCcVn+H+Du1zEsVOpxYThom4Ja+MdpkiLTctiCJ8DSBMBeAn7FxCAtJlWdzo+Fjm+g8CTnnCn4H4vKsJu91fZ3rvaYdh7eLJjd7oMTGr0YqyqLLZel2uFb6eZaN+8tQ0mb6DEMo5/uFvfYuqpG38/3dv4lqYuzp1sTFbNebFAxyXfp3to5H0Y82g92M6IwQuOIyFqNnfy8/P7v0s3jFa/MoZzTUkPv7+sIOTS2z+Fy6uQGHzptnWoPFA3YjtYkME1FNB6xrM//CAKfp7jwpMDbRg6dFmLmhCdGVVsIsj9d2hVBf5Pyn34108H1dXw=
+  template:
+    metadata:
+      annotations:
+        sealedsecrets.bitnami.com/cluster-wide: "true"
+      creationTimestamp: null
+      name: regcred
+      namespace: prod
+    type: kubernetes.io/dockerconfigjson
+
+
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  annotations:
+    sealedsecrets.bitnami.com/cluster-wide: "true"
+  creationTimestamp: null
+  name: regcred
+  namespace: dev
+spec:
+  encryptedData:
+    .dockerconfigjson: AQCej84lS22WWuk7F76ihqrSbFEYFuWhHCoKRreb1sRQYg30+gS8nYjtZfTE3pwMcIfvjVa9ZXvW9vWfb/IHd2BxcYxQkp43BLmk/K41BGKIt03Eg4vKRBExQze1zWAbOlLRQPJ+EZwZJkDf1XbP1jJe3GhyluJfJHKGmcgUJO1Pj307Xriuvf7vn0IaTZTe76LLihBQvSRemaXvtUt7SRe+YyYuiizPs9plP05dlw5jbNweWfZWqjQetNV95njPvMy3BoXrqTVMywOlDQxl44WusZoSFv+q4oPKhipPWKFCcVn+H+Du1zEsVOpxYThom4Ja+MdpkiLTctiCJ8DSBMBeAn7FxCAtJlWdzo+Fjm+g8CTnnCn4H4vKsJu91fZ3rvaYdh7eLJjd7oMTGr0YqyqLLZel2uFb6eZaN+8tQ0mb6DEMo5/uFvfYuqpG38/3dv4lqYuzp1sTFbNebFAxyXfp3to5H0Y82g92M6IwQuOIyFqNnfy8/P7v0s3jFa/MoZzTUkPv7+sIOTS2z+Fy6uQGHzptnWoPFA3YjtYkME1FNB6xrM//CAKfp7jwpMDbRg6dFmLmhCdGVVsIsj9d2hVBf5Pyn34108H1dXw=
+  template:
+    metadata:
+      annotations:
+        sealedsecrets.bitnami.com/cluster-wide: "true"
+      creationTimestamp: null
+      name: regcred
+      namespace: dev
+    type: kubernetes.io/dockerconfigjson

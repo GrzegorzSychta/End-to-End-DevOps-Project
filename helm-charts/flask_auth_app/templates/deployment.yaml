@@ -1,0 +1,65 @@
+# Environment variables are set for the Flask Auth App to connect to the DocumentDB instance
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "flask-auth-app.fullname" . }}
+  labels:
+    app: {{ include "flask-auth-app.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "flask-auth-app.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "flask-auth-app.name" . }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.image}}
+        ports:
+        - containerPort: {{ .Values.service.targetPort }}
+        env:
+          - name: DB_NAME
+            value: "expenses_app_db"
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.name }}
+                key: db-uri
+          - name: DB_PORT
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.name }}
+                key: db-port
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.name }}
+                key: db-username
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.name }}
+                key: db-password
+          - name: DB_AUTH_SOURCE
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.name }}
+                key: db-auth-source
+          - name: DB_CA_FILE
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.name }}
+                key: db-ca-file
+        volumeMounts:
+          - name: ca-cert-volume
+            mountPath: /etc/ssl/certs
+            readOnly: true
+      volumes:
+        - name: ca-cert-volume
+          secret:
+            secretName: docdb-ca-secret
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecrets }}

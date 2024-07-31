@@ -1,0 +1,148 @@
+# This file defines a configuration for a CircleCI pipeline.
+
+version: 2.1
+parameters:
+  expenses_app:
+    type: boolean
+    default: false
+  front_app:
+    type: boolean
+    default: false
+  flask_auth_app:
+    type: boolean
+    default: false
+
+jobs:
+  build_expenses_app:
+    docker:
+      - image: cimg/base:2022.09 # CircleCI convenience image.
+    steps:
+      - checkout
+      - setup_remote_docker: 
+          docker_layer_caching: true 
+      - run:
+          name: Build and push Docker image for expenses_app # $DOCKERHUB_USERNAME, $DOCKERHUB_PASSWORD and $GIT_TOKEN are set in the CircleCI project settings.
+          command: |
+            TAG="grg1337/fintrack:expenses_app-${CIRCLE_BRANCH}-$(date +%Y%m%d%H%M%S)"
+            echo "export TAG=${TAG}" >> $BASH_ENV
+            echo "Building Docker image with tag ${TAG}"
+            docker build -t ${TAG} ./src/expenses_app
+            echo "Docker build completed"
+            docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+            echo "Logged in to Docker Hub"
+            docker images # List images for debugging
+            echo "Pushing Docker image with tag ${TAG}"
+            docker push ${TAG}
+            echo "Docker push completed"
+      - run:
+          name: Configure git for HTTPS authentication
+          command: |
+            git config --global user.email "automation_user@yourdomain.com"
+            git config --global user.name "automation_user"
+            git config --global credential.helper '!f() { echo "username=x-access-token"; echo "password=${GIT_TOKEN}"; }; f'
+      - run:
+          name: Pull latest changes
+          command: git pull origin main
+      - run:
+          name: Update Kubernetes deployment image # TO-DO: replace with branch-based deployment
+          command: |
+            sed -i "s|image: grg1337/fintrack:.*|image: ${TAG}|g" ./helm-charts/expenses_app/dev/values.yaml
+            sed -i "s|image: grg1337/fintrack:.*|image: ${TAG}|g" ./helm-charts/expenses_app/prod/values.yaml
+            sed -i "s|image: grg1337/fintrack:.*|image: ${TAG}|g" ./helm-charts/expenses_app/stage/values.yaml
+            git add ./helm-charts/expenses_app/
+            git commit -m "Update expenses app deployment image to ${TAG}"
+            git push origin HEAD:$CIRCLE_BRANCH
+
+  build_front_app:
+    docker:
+      - image: cimg/base:2022.09
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build and push Docker image for front_app
+          command: |
+            TAG="grg1337/fintrack:front_app-${CIRCLE_BRANCH}-$(date +%Y%m%d%H%M%S)"
+            echo "export TAG=${TAG}" >> $BASH_ENV
+            echo "Building Docker image with tag ${TAG}"
+            docker build -t ${TAG} ./src/front_app
+            echo "Docker build completed"
+            docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+            echo "Logged in to Docker Hub"
+            docker images # List images for debugging
+            echo "Pushing Docker image with tag ${TAG}"
+            docker push ${TAG}
+            echo "Docker push completed"
+      - run:
+          name: Configure git for HTTPS authentication
+          command: |
+            git config --global user.email "CircleCi_grg.devops@gmail.com"
+            git config --global user.name "CircleCi"
+            git config --global credential.helper '!f() { echo "username=x-access-token"; echo "password=${GIT_TOKEN}"; }; f'
+      - run:
+          name: Pull latest changes
+          command: git pull origin main
+      - run:
+          name: Update Kubernetes deployment image
+          command: |
+            sed -i "s|image: grg1337/fintrack:.*|image: ${TAG}|g" ./helm-charts/front_app/dev/values.yaml
+            sed -i "s|image: grg1337/fintrack:.*|image: ${TAG}|g" ./helm-charts/front_app/stage/values.yaml
+            sed -i "s|image: grg1337/fintrack:.*|image: ${TAG}|g" ./helm-charts/front_app/prod/values.yaml
+            git add ./helm-charts/front_app/
+            git commit -m "Update flask_auth_app deployment image to ${TAG}"
+            git push origin HEAD:$CIRCLE_BRANCH
+
+  build_flask_auth_app:
+    docker:
+      - image: cimg/base:2022.09
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build and push Docker image for flask_auth_app
+          command: |
+            TAG="grg1337/fintrack:flask_auth_app-${CIRCLE_BRANCH}-$(date +%Y%m%d%H%M%S)"
+            echo "export TAG=${TAG}" >> $BASH_ENV
+            echo "Building Docker image with tag ${TAG}"
+            docker build -t ${TAG} ./src/flask_auth_app
+            echo "Docker build completed"
+            docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+            echo "Logged in to Docker Hub"
+            docker images # List images for debugging
+            echo "Pushing Docker image with tag ${TAG}"
+            docker push ${TAG}
+            echo "Docker push completed"
+      - run:
+          name: Configure git for HTTPS authentication
+          command: |
+            git config --global user.email "CircleCi_grg.devops@gmail.com"
+            git config --global user.name "CircleCi"
+            git config --global credential.helper '!f() { echo "username=x-access-token"; echo "password=${GIT_TOKEN}"; }; f'
+      - run:
+          name: Pull latest changes
+          command: git pull origin main
+      - run:
+          name: Update Kubernetes deployment image
+          command: |
+            sed -i "s|image: grg1337/fintrack:.*|image: ${TAG}|g" ./helm-charts/flask_auth_app/dev/values.yaml
+            sed -i "s|image: grg1337/fintrack:.*|image: ${TAG}|g" ./helm-charts/flask_auth_app/prod/values.yaml
+            sed -i "s|image: grg1337/fintrack:.*|image: ${TAG}|g" ./helm-charts/flask_auth_app/stage/values.yaml
+            git add ./helm-charts/flask_auth_app/
+            git commit -m "Update flask_auth_app deployment image to ${TAG}"
+            git push origin HEAD:$CIRCLE_BRANCH
+
+workflows: # Define the workflows to be executed based on the parameters set in the workflow-dispatch job.
+  expenses_app_workflow:
+    when: << pipeline.parameters.expenses_app >>
+    jobs:
+      - build_expenses_app
+  front_app_workflow: 
+    when: << pipeline.parameters.front_app >>
+    jobs:
+      - build_front_app
+  flask_auth_app_workflow:
+    when: << pipeline.parameters.flask_auth_app >>
+    jobs:
+      - build_flask_auth_app

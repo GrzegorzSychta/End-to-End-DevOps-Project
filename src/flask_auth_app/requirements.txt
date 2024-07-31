@@ -1,0 +1,14 @@
+# Build dependencies
+Flask==3.0.1
+pymongo== 4.6.1
+mongoengine==0.27.0
+pylint==3.0.3
+pytest
+mongomock==4.1.2
+sentinels
+packaging
+pytz
+setuptools==69.0.2
+flask-login
+wtforms
+flask-cors

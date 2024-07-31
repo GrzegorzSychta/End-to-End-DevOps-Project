@@ -1,0 +1,9 @@
+# Image modification triggered by CircleCI will start the deployment process
+replicaCount: 1
+image: grg1337/fintrack:front_app-main-20240711135614
+imagePullSecrets: regcred
+namespace: stage
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 43472
