@@ -61,4 +61,5 @@ __Prometheus__ - Implement tools for observability.
 
 __CI/CD__ - Implement branch-based deployment.
 
-![Architecture Diagram](https://github.com/GrzegorzSychta/End-to-End-DevOps-Project/draw.png?raw-true)
+## Architecture Diagram
+![Architecture Diagram](https://github.com/GrzegorzSychta/End-to-End-DevOps-Project/blob/main/draw.png?raw=true)
